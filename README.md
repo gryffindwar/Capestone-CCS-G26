@@ -80,11 +80,7 @@ In the project folder, run the following command to start the Flask development 
 bash
 
 python app.py
-The application will start running at http://127.0.0.1:5000/.
 
-Access the Dashboard:
-
-Open a web browser and go to http://127.0.0.1:5000/ to view the dashboard.
 
 Project Structure
 Here’s a breakdown of the project structure:
