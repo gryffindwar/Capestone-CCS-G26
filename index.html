@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Intelligence Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h1>Threat Intelligence Dashboard</h1>
+    </div>
+
+    <!-- Threat Overview Section -->
+    <div class="threat-overview">
+        <h2>Threat Overview</h2>
+        <p>
+            The Threat Overview highlights various cyber threat types, their severity, and occurrence. Gain insights into the most common and dangerous threats and their distribution over time.
+        </p>
+    </div>
+
+    <!-- Pie Chart and Line Graph side by side -->
+    <div class="charts-container">
+        <div class="chart-container">
+            <h3>Threat Type Distribution</h3>
+            <canvas id="pieChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>Threat Severity Over Time</h3>
+            <canvas id="lineChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Data Table Section -->
+    <div class="table-container">
+        <h2>Threat Data Overview</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Threat Type</th>
+                    <th>Count</th>
+                    <th>Severity</th>
+                    <th>VirusTotal Report</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for threat, count, severity in data %}
+                <tr>
+                    <td>{{ threat }}</td>
+                    <td>{{ count }}</td>
+                    <td>{{ severity }}</td>
+                    <td>No Data</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Domain Threat Data Overview -->
+    <div class="domain-data">
+        <h2>Domain Threat Data Overview</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Domain</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for domain, data in domain_data.items() %}
+                <tr>
+                    <td>{{ domain }}</td>
+                    <td>
+                        {% if data == "Error: 404" %}
+                            No data available
+                        {% elif data == "Error" %}
+                            Connection issue
+                        {% else %}
+                            <a href="https://www.virustotal.com/gui/domain/{{ domain }}" target="_blank">
+                                View VirusTotal Report
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        var ctx1 = document.getElementById('pieChart').getContext('2d');
+        var pieChart = new Chart(ctx1, {
+            type: 'pie',
+            data: {{ pie_data | tojson }},
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+
+        var ctx2 = document.getElementById('lineChart').getContext('2d');
+        var lineChart = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                datasets: [{
+                    label: 'Threat Severity',
+                    data: [5, 6, 4, 7, 8, 3, 6],
+                    borderColor: '#FF5733',
+                    backgroundColor: 'rgba(255, 87, 51, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
